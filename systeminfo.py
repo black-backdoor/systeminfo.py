@@ -72,7 +72,7 @@ class device_info():
         elif (os_info.os_name() == "Linux"):
             return str(subprocess.check_output("uname -m"))
 
-    def basebord_manufactur(self):
+    def basebord_manufacture(self):
         return str(subprocess.check_output("sudo dmidecode -s baseboard-manufacturer"))
 
 class bios():
@@ -86,7 +86,7 @@ class cpu_info():
     def cpu_number(self):
         return os.cpu_count()
 
-    def cpu_number_pysical(self):
+    def cpu_number_physical(self):
         return psutil.cpu_count(logical=False)
 
     def cpu_number_logical(self):
@@ -252,7 +252,7 @@ class disk_info():
             return
         return adjust_size(partition_usage.free)
 
-    def partition_percentage(pself, p):
+    def partition_percentage(self, p):
         try:
             partition_usage = psutil.disk_usage(p.mountpoint)
         except PermissionError:
@@ -271,7 +271,7 @@ class network_info():
     def get_network(self):
         return psutil.net_if_addrs()
 
-    def get_adress(self, address):
+    def get_address(self, address):
         return address.address
 
     def received_since_boot(self):
@@ -291,9 +291,9 @@ class network_info():
         network_mac_address = {}
         network_broadcast_mac = {}
 
-        if_addrs = network_info.get_network()
+        if_address = network_info.get_network()
 
-        for interface_name, interface_addresses in if_addrs.items():
+        for interface_name, interface_addresses in if_address.items():
             for address in interface_addresses:
                 network_name.append(interface_name)
                 # print(f"Interface: {interface_name}")
@@ -320,7 +320,7 @@ class network_info():
         except urllib.error.URLError:
             return False
 
-    def ip():
+    def ip(self):
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.connect(("google.com", 80))
@@ -329,10 +329,10 @@ class network_info():
             return False
 
 class windows():
-    def APPDATA(self):
+    def appdata(self):
         return system.os_getenv("APPDATA")
 
-    def LOCAL_APPDATA(self):
+    def local_appdata(self):
         return system.os_getenv("LOCALAPPDATA")
 
 def info():
@@ -349,7 +349,7 @@ def info():
     print(f"Boot Time:{system.boot_time()}")
 
     print("-"*40, "CPU Info", "-"*40)
-    print("Actual Cores:", cpu_info.cpu_number_pysical())
+    print("Actual Cores:", cpu_info.cpu_number_physical())
     print("Logical Cores:", cpu_info.cpu_number_logical())
     print(f"Max Frequency: {cpu_info.cpu_max_frequency()}Mhz")
     print(f"Current Frequency: {cpu_info.cpu_current_frequency()}Mhz")
@@ -397,10 +397,10 @@ def info():
 
     print("-" * 40, "Computer", "-" * 40)
     if(os_info.os_name() == "Windows"):
-        print(f"PC Hardware ID (hwid): {device_info.hwid()}")
+        print(f"PC Hardware ID (HWID): {device_info.hwid()}")
         print(f"PC Model: {device_info.model()}")
         print(f"PC manufacturer: {device_info.computer_manufacturer()}")
-        print(f"PC Systemtype: {device_info.systemtype()}")
+        print(f"PC system type: {device_info.systemtype()}")
 
     print("-" * 40, "INTERNET CONNECTION", "-" * 40)
     print(f"Internet connection? {network_info.internet_connection()}")
