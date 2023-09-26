@@ -5,10 +5,10 @@ import platform
 import GPUtil
 from datetime import datetime
 
-#for cmd based info
+# for cmd based info
 import subprocess
 
-#for ip
+# for ip
 import socket
 
 import urllib
@@ -24,115 +24,115 @@ def adjust_size(size):
             return f"{size:.3f}{i}"
 
 class os_info():
-    def os_name():
+    def os_name(self):
         return platform.system()
 
-    def os_release():
+    def os_release(self):
+        # if run on a Windows 10 Computer it returns 10
         return platform.release()
-        #run on a Windows 10 Computer it returns 10
 
-    def os_version():
+    def os_version(self):
+        # if run on a Window 10 Computer it returns the exact Version for example 10.0.22621
         uname = platform.uname()
         return uname.version
-        #run on a Window 10 Computer it returns the exact Version for example 10.0.22621
 
 class device_info():
-    def device_name():
+    def device_name(self):
         return platform.node()
 
-    def machine():
+    def machine(self):
         return platform.machine()
 
-    def platform():
+    def platform(self):
         return platform.platform()
 
-    #only for windows
-    def hwid():
+    # only for windows
+    def hwid(self):
         if (os_info.os_name() == "Windows"):
             return str(subprocess.check_output("wmic csproduct get uuid"), "utf-8").split("\n")[1].strip()
         elif (os_info.os_name() == "Linux"):
             return str(subprocess.check_output(['cat', '/etc/machine-id']))
 
 
-    def model():
+    def model(self):
         if(os_info.os_name() == "Windows"):
             return str(subprocess.check_output("wmic computersystem get model"), "utf-8").split("\n")[1].strip()
         elif(os_info.os_name() == "Linux"):
             return str(subprocess.check_output("sudo dmidecode -s system-product-name"))
 
-    def computer_manufacturer():
+    def computer_manufacturer(self):
         if(os_info.os_name() == "Windows"):
             return str(subprocess.check_output("wmic computersystem get manufacturer"), "utf-8").split("\n")[1].strip()
         elif(os_info.os_name() == "Linux"):
             return str(subprocess.check_output("sudo dmidecode -s system-manufacturer"))
 
-    def systemtype():
+    def systemtype(self):
         if (os_info.os_name() == "Windows"):
             return str(subprocess.check_output("wmic computersystem get systemtype"), "utf-8").split("\n")[1].strip()
         elif (os_info.os_name() == "Linux"):
             return str(subprocess.check_output("uname -m"))
 
-    def basebord_manufactur():
+    def basebord_manufactur(self):
         return str(subprocess.check_output("sudo dmidecode -s baseboard-manufacturer"))
 
 class bios():
-    def serial_number():
+    def serial_number(self):
         return subprocess.check_output("wmic bios get serialnumber")
 
 class cpu_info():
-    def processor_name():
+    def processor_name(self):
         return platform.processor()
 
-    def cpu_number():
+    def cpu_number(self):
         return os.cpu_count()
 
-    def cpu_number_pysical():
+    def cpu_number_pysical(self):
         return psutil.cpu_count(logical=False)
 
-    def cpu_number_logical():
+    def cpu_number_logical(self):
         return psutil.cpu_count(logical=True)
 
-    def cpu_max_frequency():
+    def cpu_max_frequency(self):
         return psutil.cpu_freq().max
 
-    def cpu_current_frequency():
+    def cpu_current_frequency(self):
         return psutil.cpu_freq().current
 
-    def cpu_usage():
+    def cpu_usage(self):
         return psutil.cpu_percent()
 
-    def cpu_usage_core():
+    def cpu_usage_core(self):
         cores = {}
         for i, perc in enumerate(psutil.cpu_percent(percpu=True, interval=1)):
             cores[i] = perc
         return cores
 
 class gpu_info():
-    def get_gpus():
+    def get_gpus(self):
         return GPUtil.getGPUs()
 
-    def gpu_info_id(gpu):
+    def gpu_info_id(self, gpu):
         return gpu.id
 
-    def gpu_info_name(gpu):
+    def gpu_info_name(self, gpu):
         return gpu.name
 
-    def gpu_info_load(gpu):
+    def gpu_info_load(self, gpu):
         return gpu.load*100
 
-    def gpu_info_memory_free(gpu):
+    def gpu_info_memory_free(self, gpu):
         return gpu.memoryFree
 
-    def gpu_info_memory_used(gpu):
+    def gpu_info_memory_used(self, gpu):
         return gpu.memoryUsed
 
-    def gpu_info_memory_total(gpu):
+    def gpu_info_memory_total(self, gpu):
         return gpu.memoryTotal
 
-    def gpu_info_temperature(gpu):
+    def gpu_info_temperature(self, gpu):
         return gpu.temperature
 
-    def gpu_info():
+    def gpu_info(self):
         gpus = gpu_info.get_gpus()
         gpu_dict = {}
         for gpu in gpus:
@@ -141,64 +141,64 @@ class gpu_info():
         return gpu_dict
 
 class ram_info():
-    def get_ram():
+    def get_ram(self):
         return psutil.virtual_memory()
 
-    def ram_total():
+    def ram_total(self):
         virtual_mem = psutil.virtual_memory()
         return adjust_size(virtual_mem.total)
 
-    def ram_available():
+    def ram_available(self):
         virtual_mem = psutil.virtual_memory()
         return adjust_size(virtual_mem.available)
 
-    def ram_used():
+    def ram_used(self):
         virtual_mem = psutil.virtual_memory()
         return adjust_size(virtual_mem.used)
 
-    def ram_used_percentage():
+    def ram_used_percentage(self):
         virtual_mem = psutil.virtual_memory()
         return virtual_mem.percent
 
 class swap_info():
-    def get_swap():
+    def get_swap(self):
         return psutil.swap_memory()
 
-    def swap_total():
+    def swap_total(self):
         swap = psutil.swap_memory()
         return adjust_size(swap.total)
 
-    def swap_free():
+    def swap_free(self):
         swap = psutil.swap_memory()
         return adjust_size(swap.free)
 
-    def swap_used():
+    def swap_used(self):
         swap = psutil.swap_memory()
         return adjust_size(swap.used)
 
-    def swap_used_percentage():
+    def swap_used_percentage(self):
         swap = psutil.swap_memory()
         return swap.percent
 
 class system():
-    def process_id():
+    def process_id(self):
         return os.getpid()
 
-    def os_getenv(key):
-        return os.getenv(key)
+    def os_getenv(self, key):
+        return os.getenv(self, key)
 
-    def os_environ_get(key):
+    def os_environ_get(self, key):
         return os.environ.get(key)
 
-    def boot_time():
+    def boot_time(self):
         boot_time_timestamp = psutil.boot_time()
         bt = datetime.fromtimestamp(boot_time_timestamp)
         return f"{bt.day}.{bt.month}.{bt.year} {bt.hour}:{bt.minute}:{bt.second}"
 
-    def username():
+    def username(self):
         return system.os_environ_get("USERNAME")
 
-    def systeminfos():
+    def systeminfos(self):
         infos = str(subprocess.check_output("systeminfo"), "utf-8").replace("\r", "").replace(" ", "#").split("\n")
         systeminfos = {}
         for i in range(0, len(infos) - 1):
@@ -209,80 +209,80 @@ class system():
                 systeminfos[t[0].replace("#", " ")] = temp.replace("#", " ")
         return systeminfos
 
-    def systeminfo():
+    def systeminfo(self):
         return str(subprocess.check_output("systeminfo"), "utf-8")
 
-    def system_version():
+    def system_version(self):
         return str(subprocess.check_output("sudo dmidecode -s system-version"))
 
-    def basebord_version():
+    def basebord_version(self):
         return str(subprocess.check_output("sudo dmidecode -s baseboard-version"))
 
 class disk_info():
-    def get_disk():
+    def get_disk(self):
         return psutil.disk_partitions()
 
-    def disk_info_name(p):
+    def disk_info_name(self, p):
         return p.device
 
-    def disk_info_moutpoint(p):
+    def disk_info_moutpoint(self, p):
         return p.mountpoint
 
-    def disk_file_system_type(p):
+    def disk_file_system_type(self, p):
         return p.fstype
 
-    def partition_total_size(p):
+    def partition_total_size(self, p):
         try:
             partition_usage = psutil.disk_usage(p.mountpoint)
         except PermissionError:
             return
         return adjust_size(partition_usage.total)
 
-    def partition_used(p):
+    def partition_used(self, p):
         try:
             partition_usage = psutil.disk_usage(p.mountpoint)
         except PermissionError:
             return
         return adjust_size(partition_usage.used)
 
-    def partition_free(p):
+    def partition_free(self, p):
         try:
             partition_usage = psutil.disk_usage(p.mountpoint)
         except PermissionError:
             return
         return adjust_size(partition_usage.free)
 
-    def partition_percentage(p):
+    def partition_percentage(pself, p):
         try:
             partition_usage = psutil.disk_usage(p.mountpoint)
         except PermissionError:
             return
         return partition_usage.percent
 
-    def all_disk_read_since_boot():
+    def all_disk_read_since_boot(self):
         disk_io = psutil.disk_io_counters()
         return adjust_size(disk_io.read_bytes)
 
-    def all_disk_write_since_boot():
+    def all_disk_write_since_boot(self):
         disk_io = psutil.disk_io_counters()
         return adjust_size(disk_io.write_bytes)
 
 class network_info():
-    def get_network():
+    def get_network(self):
         return psutil.net_if_addrs()
 
-    def get_adress(address):
+    def get_adress(self, address):
         return address.address
 
-    def received_since_boot():
+    def received_since_boot(self):
         net_io = psutil.net_io_counters()
         return adjust_size(net_io.bytes_recv)
 
-    def send_since_boot():
+    def send_since_boot(self):
         net_io = psutil.net_io_counters()
         return adjust_size(net_io.bytes_sent)
 
-    def get_network_information():
+    def get_network_information(self):
         network_name = []
         network_address = {}
         network_netmask = {}
@@ -296,7 +296,7 @@ class network_info():
         for interface_name, interface_addresses in if_addrs.items():
             for address in interface_addresses:
                 network_name.append(interface_name)
-                #print(f"Interface: {interface_name}")
+                # print(f"Interface: {interface_name}")
                 network_family[interface_name] = str(address.family)
                 if str(address.family) == 'AddressFamily.AF_INET':
                     network_address[interface_name] = str(address.address)
@@ -308,13 +308,13 @@ class network_info():
                     network_broadcast_mac[interface_name] = str(address.broadcast)
         return network_name, network_address, network_netmask, network_family, network_broadcast_ip, network_mac_address, network_broadcast_mac
 
-    def internet_connection():
+    def internet_connection(self):
         if "The wireless local area network interface is powered down and doesn't support the requested operation." in str(subprocess.getoutput('cmd /c "netsh wlan show networks"')):
             return False
         else:
             return True
 
-    def public_ip():
+    def public_ip(self):
         try:
             return urlopen(Request("https://api.ipify.org/")).read().decode().strip()
         except urllib.error.URLError:
@@ -329,10 +329,10 @@ class network_info():
             return False
 
 class windows():
-    def APPDATA():
+    def APPDATA(self):
         return system.os_getenv("APPDATA")
 
-    def LOCAL_APPDATA():
+    def LOCAL_APPDATA(self):
         return system.os_getenv("LOCALAPPDATA")
 
 def info():
